@@ -93,13 +93,15 @@ export default {
       //aller chercher les prix dans le panier
 
       for (const id in cartObj) {
-        const prixCanapeDansLePanier = cartObj[id][1];
-        const nbCanape = cartObj[id][0];
-        console.log(prixCanapeDansLePanier, nbCanape);
-        const totalPriceCanape = prixCanapeDansLePanier * nbCanape;
-        //mettre les prix du panier dans la variable "prixTotalCalcul"
-        prixtotalCalcul.push(totalPriceCanape);
-        NbCanapeTotal.push(nbCanape);
+        for(const color in cartObj[id]){
+          const prixCanapeDansLePanier = cartObj[id][color][1];
+          const nbCanape = cartObj[id][color][0];
+          const totalPriceCanape = prixCanapeDansLePanier * nbCanape;
+          //mettre les prix du panier dans la variable "prixTotalCalcul"
+          prixtotalCalcul.push(totalPriceCanape);
+          NbCanapeTotal.push(nbCanape);
+        }
+       
       }
 
       /**
@@ -149,7 +151,7 @@ export default {
     return Object.keys(cart);
   },
   modifyQuantity(cartObj, idCanape, color, newQuantity) {
-    console.log(idCanape, color, newQuantity);
+    
     cartObj[idCanape][color][0] = parseInt(newQuantity);
 
     //set item
@@ -157,4 +159,7 @@ export default {
 
     return JSON.stringify(cartObj);
   },
+
+
+ 
 };

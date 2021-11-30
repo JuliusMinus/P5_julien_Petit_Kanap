@@ -24,7 +24,7 @@ document.querySelector("#addToCart").addEventListener("click", (e) => {
   const nbProduct = parseInt(document.querySelector("#quantity").value);
   const price = parseInt(document.querySelector("#price").innerHTML);
   const color = document.querySelector("#colors").value;
-  console.log(price);
+  
   //on recupere le panier
   let cart = tools.getItem();
 
@@ -35,13 +35,13 @@ document.querySelector("#addToCart").addEventListener("click", (e) => {
   } //si il existe on ajoute le produit et sa quantité
   else {
     let cartObj = JSON.parse(cart);
-    console.log(cartObj);
+    
     // si canapeid  est déja dans le panier, on l'incremente du nb de quantité
     if (canapeId in cartObj) {
       if (color in cartObj[canapeId]) {
         cartObj[canapeId][color][0] += nbProduct;
       } else {
-        console.log(cartObj);
+       
         cartObj[canapeId][color] = [nbProduct, price];
       }
 

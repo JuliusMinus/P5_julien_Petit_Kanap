@@ -19,14 +19,14 @@ if (!cart || Object.keys(cart).length === 0) {
   //calculer le prix total
 } else {
   let cartObj = JSON.parse(cart);
-  console.log(cartObj);
+  
   const cartTemplate = document.querySelector("#cartTemplate");
   const items = document.querySelector("#cart__items");
   //affichage du contenu du panier
   for (const canapeId in cartObj) {
     for (const color in cartObj[canapeId]) {
       const nbProduct = cartObj[canapeId][color][0];
-      console.log(canapeId, nbProduct);
+      
 
       //on récupère les informations concernant le canape
 
@@ -60,6 +60,7 @@ if (!cart || Object.keys(cart).length === 0) {
                 .parentElement
         
             cart = tools.modifyQuantity(cartObj, canapeElement.dataset.id, canapeElement.dataset.color, newNbProduct);
+            tools.afficherPrixTotalEtNbCanape(cart);
           });
         //ajout d'un listener sur le bouton de suppression du canape du panier
         clone.querySelector(".deleteItem").addEventListener("click", (e) => {
@@ -68,7 +69,7 @@ if (!cart || Object.keys(cart).length === 0) {
               .parentElement;
           const idToDelete = articleToDelete.dataset.id;
           const colorToDelete = articleToDelete.dataset.color;
-          console.log(idToDelete);
+          
           //suppression du produit du panier//
           cart = tools.deleteCanape(cartObj, idToDelete, colorToDelete);
 
@@ -198,7 +199,7 @@ if (!cart || Object.keys(cart).length === 0) {
         contact,
         products,
       };
-      console.log(body);
+      
       //mettre l'objet "contact" dans le localstorage
       fetch("http://localhost:3000/api/products/order", {
         method: "POST",
@@ -215,7 +216,7 @@ if (!cart || Object.keys(cart).length === 0) {
           }
         })
         .then((data) => {
-          console.log(data);
+          
           // on efface le panier à la clé "cart"
           tools.clearStorage();
           //on redirige vers la apge de confirmation

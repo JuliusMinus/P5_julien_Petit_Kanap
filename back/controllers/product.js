@@ -49,7 +49,7 @@ exports.getOneProduct = (req, res, next) => {
  *
  */
 exports.orderProducts = (req, res, next) => {
-  console.log(req.body);
+ 
   if (
     !req.body.contact ||
     !req.body.contact.firstName ||
