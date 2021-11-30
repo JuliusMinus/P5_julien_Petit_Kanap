@@ -18,58 +18,68 @@ if (!cart || Object.keys(cart).length === 0) {
     "<p>votre panier est vide</p>";
   //calculer le prix total
 } else {
-  
   let cartObj = JSON.parse(cart);
   console.log(cartObj);
   const cartTemplate = document.querySelector("#cartTemplate");
   const items = document.querySelector("#cart__items");
   //affichage du contenu du panier
   for (const canapeId in cartObj) {
-    const nbProduct = cartObj[canapeId][0];
-    console.log(canapeId, nbProduct);
-    //on récupère les informations concernant le canape
+    for (const color in cartObj[canapeId]) {
+      const nbProduct = cartObj[canapeId][color][0];
+      console.log(canapeId, nbProduct);
 
-    apiClient.getOneCanape(canapeId).then((canape) => {
-      // ajout du canape avec ses données
-      const clone = document.importNode(cartTemplate.content, true);
+      //on récupère les informations concernant le canape
 
-      clone.querySelector(".cart__item").setAttribute("data-id", canape._id);
-      clone.querySelector(".cart__item__img img").alt = canape.altTxt;
-      clone.querySelector(".cart__item__img img").src = canape.imageUrl;
-      clone.querySelector(".cart__item__content__titlePrice h2").textContent =
-        canape.name;
-      clone.querySelector(".cart__item__content__titlePrice p").textContent =
-        tools.formatPrice(canape.price * nbProduct);
-      clone.querySelector(
-        ".cart__item__content__settings__quantity input"
-      ).value = nbProduct;
-      //ajout d'un listener qui va ecouter le changement du nombre de produit et calculer le nouveau prix en consequence
-      clone
-        .querySelector(`input.itemQuantity`)
-        .addEventListener("change", (e) => {
-          const newNbProduct = e.currentTarget.value;
+      apiClient.getOneCanape(canapeId).then((canape) => {
+        // ajout du canape avec ses données
+        const clone = document.importNode(cartTemplate.content, true);
 
-          e.currentTarget.parentElement.parentElement.parentElement.querySelector(
-            ".cart__item__content__titlePrice p"
-          ).textContent = tools.formatPrice(canape.price * newNbProduct);
+        clone.querySelector(".cart__item").setAttribute("data-id", canape._id);
+        clone.querySelector(".cart__item").setAttribute("data-color", color);
+        clone.querySelector(".cart__item__img img").alt = canape.altTxt;
+        clone.querySelector(".cart__item__img img").src = canape.imageUrl;
+        clone.querySelector(".cart__item__content__titlePrice h2").textContent =
+          canape.name + " " + color;
+        clone.querySelector(".cart__item__content__titlePrice p").textContent =
+          tools.formatPrice(canape.price * nbProduct);
+        clone.querySelector(
+          ".cart__item__content__settings__quantity input"
+        ).value = nbProduct;
+        //ajout d'un listener qui va ecouter le changement du nombre de produit et calculer le nouveau prix en consequence
+        clone
+          .querySelector(`input.itemQuantity`)
+          .addEventListener("change", (e) => {
+            const newNbProduct = e.currentTarget.value;
+
+            e.currentTarget.parentElement.parentElement.parentElement.querySelector(
+              ".cart__item__content__titlePrice p"
+            ).textContent = tools.formatPrice(canape.price * newNbProduct);
+            // /modification de la quantité dans le panier
+     
+              const canapeElement = e.currentTarget.parentElement.parentElement.parentElement
+                .parentElement
+        
+            cart = tools.modifyQuantity(cartObj, canapeElement.dataset.id, canapeElement.dataset.color, newNbProduct);
+          });
+        //ajout d'un listener sur le bouton de suppression du canape du panier
+        clone.querySelector(".deleteItem").addEventListener("click", (e) => {
+          const articleToDelete =
+            e.currentTarget.parentElement.parentElement.parentElement
+              .parentElement;
+          const idToDelete = articleToDelete.dataset.id;
+          const colorToDelete = articleToDelete.dataset.color;
+          console.log(idToDelete);
+          //suppression du produit du panier//
+          cart = tools.deleteCanape(cartObj, idToDelete, colorToDelete);
+
+          //suppression physique du produit dans le dom//
+          items.removeChild(articleToDelete);
+          tools.afficherPrixTotalEtNbCanape(cart);
         });
-      //ajout d'un listener sur le bouton de suppression du canape du panier
-      clone.querySelector(".deleteItem").addEventListener("click", (e) => {
-        const articleToDelete =
-          e.currentTarget.parentElement.parentElement.parentElement
-            .parentElement;
-        const idToDelete = articleToDelete.dataset.id;
-        console.log(idToDelete);
-        //suppression du produit du panier//
-        cart = tools.deleteCanape(cartObj, idToDelete);
 
-        //suppression physique du produit dans le dom//
-        items.removeChild(articleToDelete);
-        tools.afficherPrixTotalEtNbCanape(cart);
+        items.appendChild(clone);
       });
-
-      items.appendChild(clone);
-    });
+    }
   }
   //calculer le prix total
   tools.afficherPrixTotalEtNbCanape(cart);
@@ -207,9 +217,9 @@ if (!cart || Object.keys(cart).length === 0) {
         .then((data) => {
           console.log(data);
           // on efface le panier à la clé "cart"
-          tools.clearStorage() 
+          tools.clearStorage();
           //on redirige vers la apge de confirmation
-				  document.location.href = `./confirmation.html?orderId=${data.orderId}`;
+          document.location.href = `./confirmation.html?orderId=${data.orderId}`;
         });
     } //il y a erreur dans le formulaire
     else {

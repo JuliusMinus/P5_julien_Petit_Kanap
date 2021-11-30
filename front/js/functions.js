@@ -130,8 +130,8 @@ export default {
    * @param {number} idToDelete
    * @returns string
    */
-  deleteCanape(cartObj, idToDelete) {
-    delete cartObj[idToDelete];
+  deleteCanape(cartObj, idToDelete, colorToDelete) {
+    delete cartObj[idToDelete][colorToDelete];
 
     //set item
     this.setItem(cartObj);
@@ -147,5 +147,14 @@ export default {
     const cart = JSON.parse(this.getItem());
 
     return Object.keys(cart);
+  },
+  modifyQuantity(cartObj, idCanape, color, newQuantity) {
+    console.log(idCanape, color, newQuantity);
+    cartObj[idCanape][color][0] = parseInt(newQuantity);
+
+    //set item
+    this.setItem(cartObj);
+
+    return JSON.stringify(cartObj);
   },
 };

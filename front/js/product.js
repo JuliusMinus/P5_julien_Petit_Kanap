@@ -38,14 +38,17 @@ document.querySelector("#addToCart").addEventListener("click", (e) => {
     console.log(cartObj);
     // si canapeid  est déja dans le panier, on l'incremente du nb de quantité
     if (canapeId in cartObj) {
-      if(color in cartObj[canapeId]){
-
+      if (color in cartObj[canapeId]) {
+        cartObj[canapeId][color][0] += nbProduct;
+      } else {
+        console.log(cartObj);
+        cartObj[canapeId][color] = [nbProduct, price];
       }
-      cartObj[canapeId][0] += nbProduct;
+
       tools.setItem(cartObj);
     } // créeer une clé avec l'id canapé et la quantité
     else {
-      cartObj[canapeId] =  { [color]: [nbProduct, price] };
+      cartObj[canapeId] = { [color]: [nbProduct, price] };
       tools.setItem(cartObj);
     }
   }
